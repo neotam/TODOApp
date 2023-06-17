@@ -57,3 +57,18 @@ def task_status(request):
     status = data['finstatus']
     Task.objects.filter(id=task_id).update(isfin=status)
     return JsonResponse({'msg': 'Updated'})
+
+@csrf_exempt
+@require_http_methods(['GET', 'DELETE'])
+def delete_task(request, task_id):
+    if request.method == 'GET':
+        task = Task.objects.filter(id=task_id).values()
+        return JsonResponse(list(task), safe=False)
+
+    if request.method == 'DELETE':
+        try:
+            task = Task.objects.get(id=task_id)
+            task.delete()
+            return JsonResponse({'msg': 'Task deleted'})
+        except Task.DoesNotExist:
+            return JsonResponse({'error': 'Task does not exist'}, status=404)
