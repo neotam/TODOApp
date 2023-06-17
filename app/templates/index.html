@@ -50,8 +50,32 @@
             })
 
             console.log("Executing query selector all")
+		// Attach event listener to delete buttons
+document.addEventListener('click', function (event) {
+    if (event.target.classList.contains('btn-delete')) {
+        deleteTask(event);
+    }
+});
+
 
         }
+ 
+	function deleteTask(event) {
+    const taskElement = event.target.closest('.task');
+    const taskId = taskElement.querySelector('[data-taskid]').dataset.taskid;
+
+    fetch(`${BASE_URL}/task/${taskId}/`, {
+        method: 'DELETE'
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.msg);
+            taskElement.remove(); // Remove the task from the DOM
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
 
         function onFin(event) {
             console.debug("Clicked fin")
